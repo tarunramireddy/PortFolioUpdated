@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Moon, Sun, Github, ExternalLink, Linkedin, Mail, Download, ArrowUp, Code, Server, Database, CheckCircle2, Award } from 'lucide-react';
 import './App.css';
+import axios from 'axios';
 
 function App() {
   const [darkMode, setDarkMode] = useState(true);
@@ -77,6 +78,24 @@ function App() {
     setDarkMode(!darkMode);
   };
 
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { id, value } = e.target;
+    setFormData({ ...formData, [id]: value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await axios.post('http://localhost:3001/submit-form', formData);
+      alert('Form submitted successfully');
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert('Error submitting form');
+    }
+  };
+
   return (
     <div className={`min-h-screen transition-colors duration-300 ${darkMode ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-900'}`}>
       {/* Navigation */}
@@ -120,9 +139,10 @@ function App() {
               <a href="#contact" onClick={(e) => { e.preventDefault(); scrollToSection(contactRef); }} className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 duration-300">
                 Get in Touch
               </a>
-              <a href="#" className="px-6 py-3 border border-indigo-500 text-indigo-500 hover:bg-indigo-500 hover:text-white rounded-md transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 duration-300 flex items-center">
+              <a href="/resume.pdf" download="TarunRamireddyResume.pdf" className="px-6 py-3 border border-indigo-500 text-indigo-500 hover:bg-indigo-500 hover:text-white rounded-md transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 duration-300 flex items-center">
                 <Download size={18} className="mr-2" /> Resume
-              </a>
+            </a>
+
             </div>
           </div>
           <div className="md:w-1/2 mt-12 md:mt-0 flex justify-center">
@@ -506,19 +526,10 @@ function App() {
                     <p className="opacity-90">github.com/tarunramireddy</p>
                   </div>
                 </div>
-                {/* <div className="flex items-center">
-                  <div className={`p-3 rounded-full ${darkMode ? 'bg-gray-800' : 'bg-white'} mr-4`}>
-                    <CheckCircle2 size={20} className="text-indigo-500" />
-                  </div>
-                  <div>
-                    <p className="font-medium">Phone</p>
-                    <p className="opacity-90"></p>
-                  </div>
-                </div> */}
               </div>
             </div>
             <div className="md:w-1/2">
-              <form className={`p-8 rounded-xl shadow-xl ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+              <form className={`p-8 rounded-xl shadow-xl ${darkMode ? 'bg-gray-800' : 'bg-white'}`} onSubmit={handleSubmit}>
                 <div className="mb-6">
                   <label htmlFor="name" className="block mb-2 font-medium">Name</label>
                   <input 
@@ -526,6 +537,8 @@ function App() {
                     id="name" 
                     className={`w-full px-4 py-3 rounded-lg ${darkMode ? 'bg-gray-700 border-gray-600 focus:border-indigo-500' : 'bg-gray-50 border-gray-300 focus:border-indigo-500'} border outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all`} 
                     placeholder="Your name"
+                    value={formData.name}
+                    onChange={handleChange}
                   />
                 </div>
                 <div className="mb-6">
@@ -535,6 +548,8 @@ function App() {
                     id="email" 
                     className={`w-full px-4 py-3 rounded-lg ${darkMode ? 'bg-gray-700 border-gray-600 focus:border-indigo-500' : 'bg-gray-50 border-gray-300 focus:border-indigo-500'} border outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all`} 
                     placeholder="Your email"
+                    value={formData.email}
+                    onChange={handleChange}
                   />
                 </div>
                 <div className="mb-6">
@@ -544,6 +559,8 @@ function App() {
                     rows={5} 
                     className={`w-full px-4 py-3 rounded-lg ${darkMode ? 'bg-gray-700 border-gray-600 focus:border-indigo-500' : 'bg-gray-50 border-gray-300 focus:border-indigo-500'} border outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all`} 
                     placeholder="Your message"
+                    value={formData.message}
+                    onChange={handleChange}
                   ></textarea>
                 </div>
                 <button 
